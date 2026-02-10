@@ -1,0 +1,38 @@
+ Results Summary
+Model	Recall	Precision	F1	AUC	Missed Falls
+SVM (RBF)	99.35%	91.02%	95.00%	0.988	1 fall
+XGBoost	98.69%	94.97%	96.79%	0.996	2 falls
+Random Forest	98.69%	94.37%	96.49%	0.996	2 falls
+Logistic Regression	97.39%	94.90%	96.13%	0.997	4 falls
+🔑 Key Insights
+1. For Fall Detection, SVM is the winner
+99.35% recall = Only missed 1 fall out of 153!
+Trade-off: Slightly lower precision (91%) means more false alarms
+For safety-critical apps, false alarms are acceptable, missed falls are not
+2. XGBoost is the best balanced model
+98.69% recall with 94.97% precision
+Smallest ONNX file (48 KB) after Logistic Regression
+Best overall F1 score (96.79%)
+3. All models perform excellently (>97% recall)
+This suggests your feature engineering is excellent
+The 9 accelerometer/gyro features capture fall patterns very well
+4. For Mobile Soft Voting Ensemble
+Your soft voting strategy will work great:
+
+Final_Probability = (P_xgb + P_rf + P_lr + P_svm) / 4
+If Final_Probability > 0.5 → Fall Detected
+📱 Recommended Mobile Strategy
+Priority	Approach	Pros	Cons
+Option 1	SVM only	Highest recall (99.35%)	More false alarms
+Option 2	XGBoost only	Best balance, small size (48KB)	Slightly lower recall
+Option 3	Soft voting (all 4)	Most robust, averaged predictions	531KB total size
+Option 4	Top 2 (SVM + XGBoost)	High recall + balance	85KB total
+📁 Files Ready for Mobile
+models/
+├── xgboost_fall_detection.onnx      (48 KB)  ← Recommended
+├── random_forest_fall_detection.onnx (445 KB) ← Largest
+├── logistic_regression_fall_detection.onnx (0.6 KB) ← Smallest
+├── svm_fall_detection.onnx          (37 KB)  ← Best recall
+└── scaler.pkl                       (0.9 KB) ← IMPORTANT: Scale input features!
+⚠️ Remember: For SVM and Logistic Regression, you MUST scale inputs using the saved scaler.pkl before inference!
+
